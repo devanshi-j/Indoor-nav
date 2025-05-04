@@ -31,6 +31,7 @@
       width: 100%;
       height: 100%;
       z-index: 1;
+      transform: scale(1); /* Adjust this scale value as needed */
     }
     /* Make map visible in AR scene */
     #map {
@@ -70,25 +71,27 @@
   <!-- AR.js setup to initialize the AR scene -->
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
-  <!-- AR scene initialization (without markers for now) -->
+  <!-- AR scene initialization (with camera position and FOV adjustments) -->
   <script>
     // Initialize AR scene on page load
     window.addEventListener('load', () => {
       const scene = document.createElement('a-scene');
       scene.setAttribute('embedded', '');
       scene.setAttribute('arjs', '');
-      // Add camera to the scene
+
+      // Add camera with specific FOV and position
       const cameraEntity = document.createElement('a-entity');
-      cameraEntity.setAttribute('camera', '');
+      cameraEntity.setAttribute('camera', 'fov: 60');
+      cameraEntity.setAttribute('position', '0 0 2'); // Adjust position for scene zoom
       scene.appendChild(cameraEntity);
+
       // Append the AR scene to the body
       document.body.appendChild(scene);
       
-      // Mark the body when AR is active
       scene.addEventListener('loaded', function() {
         document.body.classList.add('ar-mode');
         
-        // Make sure leaflet map remains visible and redraws properly
+        // Ensure the Leaflet map is correctly sized
         if (window.map) {
           setTimeout(() => {
             window.map.invalidateSize();
