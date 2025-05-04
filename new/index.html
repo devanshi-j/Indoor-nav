@@ -1,94 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SVG Graph Parser with Dijkstra</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <style>
     body {
       margin: 0;
       padding: 0;
+      overflow: hidden;
     }
-    .container {
-      display: flex;
-      flex-direction: row; /* Side-by-side layout */
-    }
+
+    /* Map always fixed bottom-left */
     #map {
-      width: 460px;
-      height: 900px;
-    }
-    #svgObject {
-      width: 600px;
-      height: 900px;
-      border-left: 1px solid #ccc;
-    }
-    /* AR Scene Styling */
-    .a-scene {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 1;
-    }
-    /* Make map visible in AR scene */
-    #map {
-      position: relative;
-      z-index: 10; /* Higher z-index to show above AR scene */
-    }
-    /* Hide SVG from AR view */
-    #svgObject {
-      opacity: 1;
-      z-index: 5; /* Lower z-index than AR */
-    }
-    /* When AR is active */
-    body.ar-mode #svgObject {
-      display: none; /* Hide SVG when AR is active */
-    }
-    body.ar-mode #map {
-      position: absolute;
+      position: fixed;
       bottom: 20px;
       left: 20px;
       width: 300px;
       height: 300px;
       border: 2px solid white;
       border-radius: 5px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      z-index: 10;
+    }
+
+    /* Hidden SVG but logic remains */
+    #svgObject {
+      display: none;
+    }
+
+    a-scene {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div id="map"></div>
-    <object id="svgObject" type="image/svg+xml" data="RDSC.svg"></object>
-  </div>
-  <!-- Leaflet.js and SVG.js remain the same -->
+  <!-- Map container positioned independently -->
+  <div id="map"></div>
+
+  <!-- Hidden but loaded SVG -->
+  <object id="svgObject" type="image/svg+xml" data="RDSC.svg"></object>
+
+  <!-- AR Scene -->
+  <a-scene embedded arjs>
+    <a-entity camera></a-entity>
+  </a-scene>
+
+  <!-- Scripts -->
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="svg.js"></script>
   <script src="leaflet.js"></script>
-  <!-- AR.js setup to initialize the AR scene -->
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
-  <!-- AR scene initialization (without markers for now) -->
+
   <script>
-    // Initialize AR scene on page load
+    // Trigger AR loaded and force map resize
     window.addEventListener('load', () => {
-      const scene = document.createElement('a-scene');
-      scene.setAttribute('embedded', '');
-      scene.setAttribute('arjs', '');
-      // Add camera to the scene
-      const cameraEntity = document.createElement('a-entity');
-      cameraEntity.setAttribute('camera', '');
-      scene.appendChild(cameraEntity);
-      // Append the AR scene to the body
-      document.body.appendChild(scene);
-      
-      // Mark the body when AR is active
-      scene.addEventListener('loaded', function() {
-        document.body.classList.add('ar-mode');
-        
-        // Make sure leaflet map remains visible and redraws properly
+      const scene = document.querySelector('a-scene');
+      scene.addEventListener('loaded', () => {
         if (window.map) {
           setTimeout(() => {
             window.map.invalidateSize();
