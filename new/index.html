@@ -99,7 +99,7 @@
         document.body.classList.add('ar-mode');
         
         // Make sure leaflet map remains visible and redraws properly
-        if (window.map) {
+        if (window.map && typeof window.map.invalidateSize === 'function') {
           setTimeout(() => {
             window.map.invalidateSize();
           }, 1000);
@@ -108,7 +108,7 @@
 
       // Handle resize events to adjust AR scene to phone dimensions
       window.addEventListener('resize', () => {
-        if (window.map) {
+        if (window.map && typeof window.map.invalidateSize === 'function') {
           window.map.invalidateSize();
         }
       });
