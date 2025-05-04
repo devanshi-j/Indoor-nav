@@ -9,7 +9,6 @@
     body {
       margin: 0;
       padding: 0;
-      overflow: hidden;
     }
     .container {
       display: flex;
@@ -34,34 +33,28 @@
       z-index: 1;
     }
     /* Make map visible in AR scene */
-    body.ar-mode #map {
-      position: fixed !important; /* Use fixed for absolute positioning on screen */
-      bottom: 20px !important;
-      left: 20px !important;
-      width: 250px !important;
-      height: 250px !important;
-      z-index: 999999 !important; /* Very high z-index to ensure it's on top */
-      border: 2px solid white !important;
-      border-radius: 5px !important;
-      box-shadow: 0 0 10px rgba(0,0,0,0.5) !important;
+    #map {
+      position: relative;
+      z-index: 10; /* Higher z-index to show above AR scene */
     }
     /* Hide SVG from AR view */
+    #svgObject {
+      opacity: 1;
+      z-index: 5; /* Lower z-index than AR */
+    }
+    /* When AR is active */
     body.ar-mode #svgObject {
-      display: none !important; /* Hide SVG when AR is active */
+      display: none; /* Hide SVG when AR is active */
     }
-    
-    /* Ensure AR doesn't cover UI elements */
-    body.ar-mode .a-enter-vr {
-      bottom: 280px !important; /* Move VR button above the map */
-    }
-    
-    /* Override any AR.js default styles that might cause zoom issues */
-    .a-canvas {
-      width: 100% !important;
-      height: 100% !important;
-      position: absolute !important;
-      top: 0 !important;
-      left: 0 !important;
+    body.ar-mode #map {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      width: 300px;
+      height: 300px;
+      border: 2px solid white;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
     }
   </style>
 </head>
@@ -70,98 +63,36 @@
     <div id="map"></div>
     <object id="svgObject" type="image/svg+xml" data="RDSC.svg"></object>
   </div>
-  
-  <!-- Leaflet.js -->
+  <!-- Leaflet.js and SVG.js remain the same -->
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  
-  <!-- Initialize Leaflet map first -->
-  <script>
-    // Create the map and store it in window.map
-    window.map = L.map('map', {
-      center: [0, 0],
-      zoom: 2,
-      attributionControl: false
-    });
-    
-    // Add a base tile layer
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19
-    }).addTo(window.map);
-    
-    // Signal that the map is initialized
-    window.mapInitialized = true;
-  </script>
-  
-  <!-- Load your custom scripts -->
   <script src="svg.js"></script>
   <script src="leaflet.js"></script>
-  
-  <!-- AR.js setup -->
+  <!-- AR.js setup to initialize the AR scene -->
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
-  
-  <!-- AR scene initialization with improved settings -->
+  <!-- AR scene initialization (without markers for now) -->
   <script>
     // Initialize AR scene on page load
     window.addEventListener('load', () => {
-      // Create AR scene with adjusted settings
       const scene = document.createElement('a-scene');
       scene.setAttribute('embedded', '');
-      // Configure AR.js with adjusted parameters for better zoom
-      scene.setAttribute('arjs', 'sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3; sourceWidth: 1280; sourceHeight: 960; displayWidth: 1280; displayHeight: 960;');
-      
-      // Add camera to the scene with modified settings
+      scene.setAttribute('arjs', '');
+      // Add camera to the scene
       const cameraEntity = document.createElement('a-entity');
       cameraEntity.setAttribute('camera', '');
-      // Add look-controls with no zoom to prevent unexpected zoom behavior
-      cameraEntity.setAttribute('look-controls', 'enabled: false;');
       scene.appendChild(cameraEntity);
-      
       // Append the AR scene to the body
       document.body.appendChild(scene);
       
       // Mark the body when AR is active
       scene.addEventListener('loaded', function() {
-        // Add class to body when AR is loaded
         document.body.classList.add('ar-mode');
         
-        // Ensure map exists before trying to invalidate its size
-        if (window.map && typeof window.map.invalidateSize === 'function') {
+        // Make sure leaflet map remains visible and redraws properly
+        if (window.map) {
           setTimeout(() => {
             window.map.invalidateSize();
-            // If the map container needs to be specifically positioned
-            const mapContainer = document.getElementById('map');
-            if (mapContainer) {
-              // Force the container to the bottom left
-              mapContainer.style.position = 'fixed';
-              mapContainer.style.bottom = '20px';
-              mapContainer.style.left = '20px';
-              mapContainer.style.zIndex = '999999';
-            }
           }, 1000);
-        } else {
-          console.warn('Map not initialized or invalidateSize method not available');
-        }
-      });
-      
-      // Add listener to ensure map positioning when camera moves
-      window.addEventListener('resize', () => {
-        if (document.body.classList.contains('ar-mode') && 
-            window.map && 
-            typeof window.map.invalidateSize === 'function') {
-          window.map.invalidateSize();
-        }
-      });
-      
-      // Monitor document for entered AR mode
-      document.addEventListener('fullscreenchange', () => {
-        if (document.fullscreenElement) {
-          document.body.classList.add('ar-mode');
-          setTimeout(() => {
-            if (window.map && typeof window.map.invalidateSize === 'function') {
-              window.map.invalidateSize();
-            }
-          }, 500);
         }
       });
     });
