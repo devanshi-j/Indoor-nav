@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SVG Graph Parser with Dijkstra</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: row; /* Side-by-side layout */
+    }
+
+    #map {
+      width: 460px;
+      height: 900px;
+    }
+
+    #svgObject {
+      width: 600px;
+      height: 900px;
+      border-left: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="map"></div>
+    <object id="svgObject" type="image/svg+xml" data="RDSC.svg"></object>
+  </div>
+
+  <!-- Leaflet.js and SVG.js remain the same -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="svg.js"></script>
+  <script src="leaflet.js"></script>
+
+  <!-- New script to handle marker detection and integration -->
+  <script src="markerDetection.js"></script>
+</body>
+</html>
