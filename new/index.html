@@ -9,28 +9,40 @@
     body {
       margin: 0;
       padding: 0;
+      overflow: hidden; /* Prevent scrolling to keep AR scene visible */
     }
 
     .container {
       display: flex;
       flex-direction: row; /* Side-by-side layout */
+      position: relative;
     }
 
+    /* Leaflet map settings to position it at bottom-left */
     #map {
-      width: 460px;
-      height: 900px;
+      width: 300px; /* You can adjust the width as needed */
+      height: 300px; /* Set the height for the map */
+      position: fixed;
+      bottom: 20px;  /* Adjust to move it slightly above the bottom */
+      left: 20px;    /* Adjust for left positioning */
+      z-index: 9999; /* Ensure it appears above other elements */
     }
 
+    /* The SVG container stays, but will be positioned behind other content */
     #svgObject {
-      width: 600px;
-      height: 900px;
-      border-left: 1px solid #ccc;
+      width: 100%; /* Make it fill available space */
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: -1; /* Position SVG behind the Leaflet map */
     }
+
   </style>
 </head>
 <body>
   <div class="container">
-    <div id="map"></div>
+    <!-- The SVG stays in the background, will be hidden when AR is active -->
     <object id="svgObject" type="image/svg+xml" data="RDSC.svg"></object>
   </div>
 
@@ -58,6 +70,14 @@
 
       // Append the AR scene to the body
       document.body.appendChild(scene);
+
+      // Hide the SVG when AR scene is initialized
+      document.getElementById('svgObject').style.display = 'none';
+
+      // Optionally, you can add a function to unhide the SVG when AR scene ends
+      scene.addEventListener('exit', function() {
+        document.getElementById('svgObject').style.display = 'block';
+      });
     });
   </script>
 </body>
