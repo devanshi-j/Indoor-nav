@@ -47,7 +47,7 @@
       display: none; /* Hide SVG when AR is active */
     }
     body.ar-mode #map {
-      position: absolute;
+      position: fixed; /* Use fixed instead of absolute to ensure it stays in view */
       bottom: 20px;
       left: 20px;
       width: 300px;
@@ -55,14 +55,16 @@
       border: 2px solid white;
       border-radius: 5px;
       box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      z-index: 999; /* Ensure it's above everything */
     }
     /* Media queries for phone dimensions */
     @media only screen and (max-width: 767px) {
       body.ar-mode #map {
         width: calc(100vw - 40px);
         height: 200px;
-        bottom: 10px;
-        left: 10px;
+        bottom: 20px; /* Fixed position from bottom */
+        left: 50%;
+        transform: translateX(-50%); /* Center horizontally */
       }
     }
   </style>
@@ -87,9 +89,10 @@
       scene.setAttribute('embedded', '');
       scene.setAttribute('arjs', '');
       scene.setAttribute('vr-mode-ui', 'enabled: false');
-      // Add camera to the scene
+      // Add camera to the scene with adjusted settings
       const cameraEntity = document.createElement('a-entity');
-      cameraEntity.setAttribute('camera', '');
+      cameraEntity.setAttribute('camera', 'zoom: 0.7; fov: 80; near: 0.1; far: 10000');
+      cameraEntity.setAttribute('look-controls', '');
       scene.appendChild(cameraEntity);
       // Append the AR scene to the body
       document.body.appendChild(scene);
