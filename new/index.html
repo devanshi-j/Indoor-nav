@@ -70,13 +70,36 @@
     <div id="map"></div>
     <object id="svgObject" type="image/svg+xml" data="RDSC.svg"></object>
   </div>
-  <!-- Leaflet.js and SVG.js remain the same -->
+  
+  <!-- Leaflet.js -->
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  
+  <!-- Initialize Leaflet map first -->
+  <script>
+    // Create the map and store it in window.map
+    window.map = L.map('map', {
+      center: [0, 0],
+      zoom: 2,
+      attributionControl: false
+    });
+    
+    // Add a base tile layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19
+    }).addTo(window.map);
+    
+    // Signal that the map is initialized
+    window.mapInitialized = true;
+  </script>
+  
+  <!-- Load your custom scripts -->
   <script src="svg.js"></script>
   <script src="leaflet.js"></script>
-  <!-- AR.js setup to initialize the AR scene -->
+  
+  <!-- AR.js setup -->
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
+  
   <!-- AR scene initialization with improved settings -->
   <script>
     // Initialize AR scene on page load
@@ -102,8 +125,8 @@
         // Add class to body when AR is loaded
         document.body.classList.add('ar-mode');
         
-        // Force re-render of the map to ensure it displays correctly
-        if (window.map) {
+        // Ensure map exists before trying to invalidate its size
+        if (window.map && typeof window.map.invalidateSize === 'function') {
           setTimeout(() => {
             window.map.invalidateSize();
             // If the map container needs to be specifically positioned
@@ -116,12 +139,16 @@
               mapContainer.style.zIndex = '999999';
             }
           }, 1000);
+        } else {
+          console.warn('Map not initialized or invalidateSize method not available');
         }
       });
       
       // Add listener to ensure map positioning when camera moves
       window.addEventListener('resize', () => {
-        if (document.body.classList.contains('ar-mode') && window.map) {
+        if (document.body.classList.contains('ar-mode') && 
+            window.map && 
+            typeof window.map.invalidateSize === 'function') {
           window.map.invalidateSize();
         }
       });
@@ -131,7 +158,9 @@
         if (document.fullscreenElement) {
           document.body.classList.add('ar-mode');
           setTimeout(() => {
-            if (window.map) window.map.invalidateSize();
+            if (window.map && typeof window.map.invalidateSize === 'function') {
+              window.map.invalidateSize();
+            }
           }, 500);
         }
       });
