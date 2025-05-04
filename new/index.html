@@ -39,7 +39,26 @@
   <script src="svg.js"></script>
   <script src="leaflet.js"></script>
 
-  <!-- New script to handle marker detection and integration -->
-  <script src="markerDetection.js"></script>
+  <!-- AR.js setup to initialize the AR scene -->
+  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
+
+  <!-- AR scene initialization (without markers for now) -->
+  <script>
+    // Initialize AR scene on page load
+    window.addEventListener('load', () => {
+      const scene = document.createElement('a-scene');
+      scene.setAttribute('embedded', '');
+      scene.setAttribute('arjs', '');
+
+      // Add camera to the scene
+      const cameraEntity = document.createElement('a-entity');
+      cameraEntity.setAttribute('camera', '');
+      scene.appendChild(cameraEntity);
+
+      // Append the AR scene to the body
+      document.body.appendChild(scene);
+    });
+  </script>
 </body>
 </html>
