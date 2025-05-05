@@ -12,50 +12,47 @@
       position: relative;
     }
     
+.container {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      width: 300px; /* Adjust the container width */
+      height: 300px; /* Adjust the container height */
+      z-index: 999; /* Ensure the container stays above the AR scene */
+    }
+
     #map {
-  width: 300px; /* Adjust the width to make it smaller */
-  height: 300px; /* Adjust the height to make it smaller */
-  position: fixed; /* Fix the map in place */
-  bottom: 20px; /* Place the map 20px from the bottom */
-  left: 20px; /* Place the map 20px from the left */
-  border: 2px solid white; /* White border */
-  border-radius: 5px; /* Rounded corners */
-  box-shadow: 0 0 10px rgba(0,0,0,0.5); /* Add shadow for better visibility */
-  z-index: 999; /* Ensure the map stays above the AR scene */
-}
+      width: 100%; /* Make map fill container */
+      height: 100%; /* Make map fill container */
+      border: 2px solid white;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
 
-#svgObject {
-  width: 600px; /* Keeping your original size */
-  height: 900px; /* Keeping your original size */
-  border-left: 1px solid #ccc;
-  opacity: 1;
-  z-index: 5; /* Keep z-index as is for SVG */
-}
+    #svgObject {
+      width: 100%; /* Make SVG fill container */
+      height: 100%; /* Make SVG fill container */
+      border-left: 1px solid #ccc;
+      opacity: 1;
+      z-index: 5;
+    }
 
-.a-scene {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 1; /* AR scene should stay in the background */
-}
+    .a-scene {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1; /* AR scene stays in the background */
+    }
 
-body.ar-mode #svgObject {
-  display: none; /* Hide SVG when in AR mode */
-}
+    body.ar-mode #svgObject {
+      display: none; /* Hide SVG in AR mode */
+    }
 
-body.ar-mode #map {
-  position: fixed;
-  bottom: 20px; /* Keep map fixed in the bottom-left corner */
-  left: 20px;
-  width: 300px; /* Adjust the size for the map */
-  height: 300px; /* Adjust the size for the map */
-  border: 2px solid white; /* Border around the map */
-  border-radius: 5px; /* Rounded corners */
-  box-shadow: 0 0 10px rgba(0,0,0,0.5); /* Shadow for visibility */
-  z-index: 999; /* Ensure the map is above AR scene */
-}
+    body.ar-mode #map {
+      display: block; /* Ensure the map stays in the container */
+    }
 
   </style>
 </head>
