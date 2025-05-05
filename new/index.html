@@ -25,11 +25,7 @@
     }
     
     #svgObject {
-      width: 600px;
-      height: 900px;
-      border-left: 1px solid #ccc;
-      opacity: 1;
-      z-index: 5;
+      display: none;
     }
     
     .a-scene {
@@ -40,16 +36,12 @@
       height: 100vh;
       z-index: 1;
     }
-    
-    body.ar-mode #svgObject {
-      display: none;
-    }
+  
   </style>
 </head>
 <body>
   <div class="container">
     <div id="map"></div>
-    <object id="svgObject" type="image/svg+xml" data="RDSC.svg"></object>
   </div>
   
   <!-- A-Frame and AR.js -->
