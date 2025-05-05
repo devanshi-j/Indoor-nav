@@ -99,6 +99,14 @@
   </a-scene>
 
  <script>
+
+   document.addEventListener('DOMContentLoaded', () => {
+    const sceneEl = document.querySelector('a-scene');
+
+    if (sceneEl) {
+      sceneEl.addEventListener('camera-init', function () {
+        console.log(' AR session initialized (camera ready).');
+      });
   // REMOVE this entire block if leaflet.js already initializes the map
   window.addEventListener('load', () => {
     const map = L.map('map').setView([51.505, -0.09], 13);
