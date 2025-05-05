@@ -1,22 +1,28 @@
-document.addEventListener("DOMContentLoaded", function () {
-  if (typeof AFRAME !== 'undefined') {
-    AFRAME.registerComponent('markerhandler', {
-      init: function () {
-        this.el.sceneEl.addEventListener('targetFound', (e) => {
-          const markerId = e.target.id;  // Get the marker's ID from the DOM element
+ document.addEventListener("DOMContentLoaded", function () {
+    if (typeof AFRAME !== 'undefined') {
+      AFRAME.registerComponent('markerhandler', {
+        init: function () {
+          this.el.sceneEl.addEventListener('markerFound', (e) => {
+            const markerEl = e.target;
+            const markerId = markerEl.getAttribute('id');
 
-          console.log("Detected marker ID:", markerId);
+            console.log("Detected marker with ID:", markerId);
 
-          if (markerId && typeof window.setUserLocation === 'function') {
-            window.setUserLocation(markerId);  // Update user location based on marker ID
-          }
-        });
-      }
-    });
+            if (markerId && typeof window.setUserLocation === 'function') {
+              window.setUserLocation(markerId);
+              console.log("User location set via marker:", markerId);
+            } else {
+              console.warn("No valid markerId or setUserLocation function missing.");
+            }
+          });
+        }
+      });
 
-    // Attach the markerhandler component to the scene
-    document.querySelector('a-scene').setAttribute('markerhandler', '');
-  } else {
-    console.error("AFRAME is not loaded");
-  }
-});
+      // Attach markerhandler to all markers
+      document.querySelectorAll('a-marker').forEach(marker => {
+        marker.setAttribute('markerhandler', '');
+      });
+    } else {
+      console.error("AFRAME is not loaded.");
+    }
+  });
