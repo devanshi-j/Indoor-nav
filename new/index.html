@@ -97,30 +97,27 @@
 </div>
   </a-scene>
 
-  <script>
-    // Initialize map when page loads
-    window.addEventListener('load', () => {
-      // Create Leaflet map
-      const map = L.map('map').setView([51.505, -0.09], 13);
+ <script>
+  // REMOVE this entire block if leaflet.js already initializes the map
+  window.addEventListener('load', () => {
+    const map = L.map('map').setView([51.505, -0.09], 13);
 
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      }).addTo(map);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
 
-      // Add sample marker
-      L.marker([51.5, -0.09]).addTo(map)
-        .bindPopup('A sample marker');
+    L.marker([51.5, -0.09]).addTo(map)
+      .bindPopup('A sample marker');
 
-      // Fix for map sizing issues
-      setTimeout(() => {
-        map.invalidateSize();
-      }, 1000);
+    setTimeout(() => {
+      map.invalidateSize();
+    }, 1000);
 
-      // Handle resizing
-      window.addEventListener('resize', () => {
-        setTimeout(() => map.invalidateSize(), 200);
-      });
+    window.addEventListener('resize', () => {
+      setTimeout(() => map.invalidateSize(), 200);
     });
-  </script>
+  });
+</script>
+
 </body>
 </html> 
