@@ -100,17 +100,31 @@
 </div>
   </a-scene>
 
- <script>
+<script>
+  AFRAME.registerComponent('markerhandler', {
+    init: function () {
+      const marker = this.el;
+
+      marker.addEventListener('markerFound', () => {
+        console.log(`Marker detected: ${marker.id}`);
+        // Optionally, add any visual or functional changes here
+      });
+
+      marker.addEventListener('markerLost', () => {
+        console.log(`Marker lost: ${marker.id}`);
+      });
+    }
+  });
+
   document.addEventListener('DOMContentLoaded', () => {
     const sceneEl = document.querySelector('a-scene');
 
     if (sceneEl) {
       sceneEl.addEventListener('camera-init', function () {
-        console.log(' AR session initialized (camera ready).');
+        console.log('AR session initialized (camera ready).');
       });
-
     } else {
-      console.warn(' A-Frame scene not found. AR session NOT initialized.');
+      console.warn('A-Frame scene not found. AR session NOT initialized.');
     }
 
     // If Leaflet map isn't already initialized in leaflet.js
@@ -139,6 +153,7 @@
     }
   });
 </script>
+
 
 </body>
 </html> -->
