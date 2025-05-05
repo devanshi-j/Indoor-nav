@@ -99,32 +99,42 @@
   </a-scene>
 
  <script>
-
-   document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', () => {
     const sceneEl = document.querySelector('a-scene');
 
     if (sceneEl) {
       sceneEl.addEventListener('camera-init', function () {
         console.log(' AR session initialized (camera ready).');
       });
-  // REMOVE this entire block if leaflet.js already initializes the map
-  window.addEventListener('load', () => {
-    const map = L.map('map').setView([51.505, -0.09], 13);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
+    } else {
+      console.warn(' A-Frame scene not found. AR session NOT initialized.');
+    }
 
-    L.marker([51.5, -0.09]).addTo(map)
-      .bindPopup('A sample marker');
+    // If Leaflet map isn't already initialized in leaflet.js
+    if (!window._leafletInitialized) {
+      window.addEventListener('load', () => {
+        const map = L.map('map').setView([51.505, -0.09], 13);
 
-    setTimeout(() => {
-      map.invalidateSize();
-    }, 1000);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
 
-    window.addEventListener('resize', () => {
-      setTimeout(() => map.invalidateSize(), 200);
-    });
+        L.marker([51.5, -0.09]).addTo(map)
+          .bindPopup('A sample marker');
+
+        setTimeout(() => {
+          map.invalidateSize();
+        }, 1000);
+
+        window.addEventListener('resize', () => {
+          setTimeout(() => map.invalidateSize(), 200);
+        });
+
+        // Mark map as initialized to avoid re-initializing later
+        window._leafletInitialized = true;
+      });
+    }
   });
 </script>
 
