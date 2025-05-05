@@ -8,7 +8,7 @@ window.addEventListener("load", () => {
     const imageHeight = 450;
     const svgHeight = 450;
     const imageBounds = [[0, 0], [imageHeight, imageWidth]];
-    L.imageOverlay('RDSC.svg', imageBounds).addTo(map);
+    L.imageOverlay('RDSC.jpg', imageBounds).addTo(map);
     map.fitBounds(imageBounds);
 
     const scaleFactorX = imageWidth / 230;
