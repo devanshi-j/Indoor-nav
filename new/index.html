@@ -12,7 +12,7 @@
     }
     .container {
       display: flex;
-      flex-direction: row; /* Side-by-side layout */
+      flex-direction: row;
     }
     #map {
       width: 460px;
@@ -23,31 +23,27 @@
       height: 900px;
       border-left: 1px solid #ccc;
     }
-    /* AR Scene Styling */
     .a-scene {
       position: absolute;
       top: 0;
       left: 0;
-      width: 100vw; /* Use viewport width */
-      height: 100vh; /* Use viewport height */
+      width: 100vw;
+      height: 100vh;
       z-index: 1;
     }
-    /* Make map visible in AR scene */
     #map {
       position: relative;
-      z-index: 10; /* Higher z-index to show above AR scene */
+      z-index: 10;
     }
-    /* Hide SVG from AR view */
     #svgObject {
       opacity: 1;
-      z-index: 5; /* Lower z-index than AR */
+      z-index: 5;
     }
-    /* When AR is active */
     body.ar-mode #svgObject {
-      display: none; /* Hide SVG when AR is active */
+      display: none;
     }
     body.ar-mode #map {
-      position: fixed; /* Use fixed instead of absolute to ensure it stays in view */
+      position: fixed;
       bottom: 20px;
       left: 20px;
       width: 300px;
@@ -55,16 +51,15 @@
       border: 2px solid white;
       border-radius: 5px;
       box-shadow: 0 0 10px rgba(0,0,0,0.5);
-      z-index: 999; /* Ensure it's above everything */
+      z-index: 999;
     }
-    /* Media queries for phone dimensions */
     @media only screen and (max-width: 767px) {
       body.ar-mode #map {
         width: calc(100vw - 40px);
         height: 200px;
-        bottom: 20px; /* Fixed position from bottom */
+        bottom: 20px;
         left: 50%;
-        transform: translateX(-50%); /* Center horizontally */
+        transform: translateX(-50%);
       }
     }
   </style>
@@ -74,34 +69,40 @@
     <div id="map"></div>
     <object id="svgObject" type="image/svg+xml" data="RDSC.svg"></object>
   </div>
-  <!-- Leaflet.js and SVG.js remain the same -->
+
+  <!-- Leaflet and SVG logic -->
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="svg.js"></script>
   <script src="leaflet.js"></script>
-  <!-- AR.js setup to initialize the AR scene -->
+
+  <!-- AR.js -->
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
-  <!-- AR scene initialization (without markers for now) -->
+
+  <!-- AR scene injection -->
   <script>
-    // Initialize AR scene on page load
     window.addEventListener('load', () => {
       const scene = document.createElement('a-scene');
       scene.setAttribute('embedded', '');
       scene.setAttribute('arjs', '');
       scene.setAttribute('vr-mode-ui', 'enabled: false');
-      // Add camera to the scene with adjusted settings
+
       const cameraEntity = document.createElement('a-entity');
       cameraEntity.setAttribute('camera', 'zoom: 0.7; fov: 80; near: 0.1; far: 10000');
       cameraEntity.setAttribute('look-controls', '');
       scene.appendChild(cameraEntity);
-      // Append the AR scene to the body
+
       document.body.appendChild(scene);
-      
-      // Mark the body when AR is active
-      scene.addEventListener('loaded', function() {
+
+      scene.addEventListener('loaded', () => {
         document.body.classList.add('ar-mode');
-        
-        // Make sure leaflet map remains visible and redraws properly
+
+        // Resize A-Frame renderer manually
+        if (scene.renderer) {
+          scene.renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // Redraw Leaflet map
         if (window.map && typeof window.map.invalidateSize === 'function') {
           setTimeout(() => {
             window.map.invalidateSize();
@@ -109,8 +110,10 @@
         }
       });
 
-      // Handle resize events to adjust AR scene to phone dimensions
       window.addEventListener('resize', () => {
+        if (scene.renderer) {
+          scene.renderer.setSize(window.innerWidth, window.innerHeight);
+        }
         if (window.map && typeof window.map.invalidateSize === 'function') {
           window.map.invalidateSize();
         }
