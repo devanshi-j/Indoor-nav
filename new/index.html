@@ -17,11 +17,15 @@
     #map {
       width: 460px;
       height: 900px;
+      position: relative;
+      z-index: 10;
     }
     #svgObject {
       width: 600px;
       height: 900px;
       border-left: 1px solid #ccc;
+      opacity: 1;
+      z-index: 5;
     }
     .a-scene {
       position: absolute;
@@ -30,14 +34,6 @@
       width: 100vw;
       height: 100vh;
       z-index: 1;
-    }
-    #map {
-      position: relative;
-      z-index: 10;
-    }
-    #svgObject {
-      opacity: 1;
-      z-index: 5;
     }
     body.ar-mode #svgObject {
       display: none;
@@ -53,15 +49,7 @@
       box-shadow: 0 0 10px rgba(0,0,0,0.5);
       z-index: 999;
     }
-    @media only screen and (max-width: 767px) {
-      body.ar-mode #map {
-        width: calc(100vw - 40px);
-        height: 200px;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-      }
-    }
+    
   </style>
 </head>
 <body>
@@ -70,16 +58,12 @@
     <object id="svgObject" type="image/svg+xml" data="RDSC.svg"></object>
   </div>
 
-  <!-- Leaflet and SVG logic -->
+  <!-- Leaflet and AR.js -->
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="svg.js"></script>
-  <script src="leaflet.js"></script>
-
-  <!-- AR.js -->
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
 
-  <!-- AR scene injection -->
+  <!-- AR Scene Setup -->
   <script>
     window.addEventListener('load', () => {
       const scene = document.createElement('a-scene');
@@ -91,31 +75,35 @@
       cameraEntity.setAttribute('camera', 'zoom: 0.7; fov: 80; near: 0.1; far: 10000');
       cameraEntity.setAttribute('look-controls', '');
       scene.appendChild(cameraEntity);
-
       document.body.appendChild(scene);
 
+      // Handle scene load
       scene.addEventListener('loaded', () => {
-  document.body.classList.add('ar-mode');
+        document.body.classList.add('ar-mode');
 
-  // Fix renderer size and camera aspect
-  if (scene.renderer && scene.camera) {
-    scene.renderer.setSize(window.innerWidth, window.innerHeight);
-    scene.camera.aspect = window.innerWidth / window.innerHeight;
-    scene.camera.updateProjectionMatrix();
-  }
+        if (scene.renderer && scene.camera) {
+          scene.renderer.setSize(window.innerWidth, window.innerHeight);
+          scene.camera.aspect = window.innerWidth / window.innerHeight;
+          scene.camera.updateProjectionMatrix();
+        }
 
-  if (window.map && typeof window.map.invalidateSize === 'function') {
-    setTimeout(() => {
-      window.map.invalidateSize();
-    }, 1000);
-  }
-});
+        if (window.map && typeof window.map.invalidateSize === 'function') {
+          setTimeout(() => window.map.invalidateSize(), 1000);
+        }
+      });
 
+      // Handle orientation/resize
+      window.addEventListener('resize', () => {
+        if (scene.renderer && scene.camera) {
+          scene.renderer.setSize(window.innerWidth, window.innerHeight);
+          scene.camera.aspect = window.innerWidth / window.innerHeight;
+          scene.camera.updateProjectionMatrix();
+        }
 
-     scene.renderer.setSize(window.innerWidth, window.innerHeight);
-scene.camera.aspect = window.innerWidth / window.innerHeight;
-scene.camera.updateProjectionMatrix();
-
+        if (window.map && typeof window.map.invalidateSize === 'function') {
+          window.map.invalidateSize();
+        }
+      });
     });
   </script>
 </body>
