@@ -11,9 +11,9 @@
       overflow: hidden;
       position: relative;
     }
-    
+
     #map {
-      position: fixed;
+      position: absolute;
       bottom: 20px;
       left: 20px;
       width: 150px;
@@ -21,76 +21,51 @@
       border: 2px solid white;
       border-radius: 5px;
       box-shadow: 0 0 10px rgba(0,0,0,0.5);
-      z-index: 999;
+      z-index: 10;
       pointer-events: auto;
     }
-    
-    #svgObject {
-      display: none; /* Hide the SVG object when in AR scene */
-    }
-    
-    /* Ensure AR scene is behind the map but above other elements */
-    .a-canvas {
-      z-index: 1 !important;
-    }
-    
-    /* For non-AR mode - showing SVG (handled by JS) */
-    body.desktop-mode #svgObject {
-      display: block;
-      width: 600px;
-      height: 900px;
-      border-left: 1px solid #ccc;
-    }
-    
-    body.desktop-mode .a-scene {
-      display: none !important;
+
+    a-scene {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
     }
   </style>
 </head>
 <body>
-  <!-- Leaflet map will be in AR scene -->
+  <!-- Leaflet Map Overlay -->
   <div id="map"></div>
-  
-  <!-- SVG object stays in HTML but hidden in AR mode -->
-  <object id="svgObject" type="image/svg+xml" data="RDSC.svg"></object>
-  
+
   <!-- A-Frame and AR.js -->
   <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
   <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
-  <!-- Include your custom scripts -->
-  <script src="leaflet.js"></script>
   <script src="svg.js"></script>
-  <!-- Leaflet -->
+  <script src="leaflet.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
-  
+
+  <!-- AR Scene -->
   <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix;">
-    <!-- Camera entity with appropriate parameters -->
+    <a-box position="0 0.5 -3" rotation="0 45 0" color="#4CC3D9"></a-box>
     <a-entity camera look-controls position="0 0 0"></a-entity>
   </a-scene>
-  
+
   <script>
-    // Initialize map when page loads
+    // Initialize Leaflet map
     window.addEventListener('load', () => {
-      // Hide SVG object when in AR mode
-      document.getElementById('svgObject').style.display = 'none';
-      
-      // Create Leaflet map
       const map = L.map('map').setView([51.505, -0.09], 13);
-      
+
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       }).addTo(map);
-      
-      // Add sample marker
-      L.marker([51.5, -0.09]).addTo(map)
-        .bindPopup('A sample marker');
-      
-      // Fix for map sizing issues
-      setTimeout(() => {
-        map.invalidateSize();
-      }, 1000);
-      
-      // Handle resizing
+
+      L.marker([51.5, -0.09]).addTo(map).bindPopup('A sample marker');
+
+      // Fix map sizing
+      setTimeout(() => map.invalidateSize(), 1000);
+
       window.addEventListener('resize', () => {
         setTimeout(() => map.invalidateSize(), 200);
       });
