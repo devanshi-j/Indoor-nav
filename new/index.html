@@ -64,47 +64,83 @@
   <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
 
   <!-- AR Scene Setup -->
-  <script>
-    window.addEventListener('load', () => {
+
+   <script>
+  window.addEventListener('load', () => {
+    // Prevent multiple scenes from being injected
+    if (!document.querySelector('a-scene')) {
+      // Create the a-scene element
       const scene = document.createElement('a-scene');
       scene.setAttribute('embedded', '');
       scene.setAttribute('arjs', '');
       scene.setAttribute('vr-mode-ui', 'enabled: false');
+      
+      // Create and customize the canvas element
+      const canvas = document.createElement('canvas');
+      canvas.classList.add('a-canvas');
+      canvas.style.width = '100%';
+      canvas.style.height = 'auto';
 
+      // Append the canvas to the scene
+      scene.appendChild(canvas);
+
+      // Add the scene to the document body
+      document.body.appendChild(scene);
+
+      // Create and configure the camera entity
       const cameraEntity = document.createElement('a-entity');
       cameraEntity.setAttribute('camera', 'zoom: 0.7; fov: 80; near: 0.1; far: 10000');
       cameraEntity.setAttribute('look-controls', '');
       scene.appendChild(cameraEntity);
-      document.body.appendChild(scene);
 
-      // Handle scene load
+      // Add lights (optional, if needed for the scene)
+      const light1 = document.createElement('a-entity');
+      light1.setAttribute('light', 'type: directional; intensity: 1; color: #fff');
+      scene.appendChild(light1);
+
+      const light2 = document.createElement('a-entity');
+      light2.setAttribute('light', 'type: ambient; intensity: 0.5');
+      scene.appendChild(light2);
+    }
+
+    // Handle resizing of the canvas and scene
+    window.addEventListener('resize', () => {
+      const canvas = document.querySelector('.a-canvas');
+      const scene = document.querySelector('a-scene');
+
+      if (canvas) {
+        // Adjust canvas size on window resize
+        canvas.style.width = `${window.innerWidth}px`;
+        canvas.style.height = `${window.innerHeight}px`;
+      }
+
+      if (scene) {
+        // Adjust scene size on window resize
+        scene.setAttribute('width', window.innerWidth);
+        scene.setAttribute('height', window.innerHeight);
+      }
+    });
+
+    // Handle the scene load (when the scene has fully loaded)
+    const scene = document.querySelector('a-scene');
+    if (scene) {
       scene.addEventListener('loaded', () => {
         document.body.classList.add('ar-mode');
-
         if (scene.renderer && scene.camera) {
           scene.renderer.setSize(window.innerWidth, window.innerHeight);
           scene.camera.aspect = window.innerWidth / window.innerHeight;
           scene.camera.updateProjectionMatrix();
         }
 
+        // Adjust map size (if using Leaflet or other maps)
         if (window.map && typeof window.map.invalidateSize === 'function') {
           setTimeout(() => window.map.invalidateSize(), 1000);
         }
       });
+    }
+  });
 
-      // Handle orientation/resize
-      window.addEventListener('resize', () => {
-        if (scene.renderer && scene.camera) {
-          scene.renderer.setSize(window.innerWidth, window.innerHeight);
-          scene.camera.aspect = window.innerWidth / window.innerHeight;
-          scene.camera.updateProjectionMatrix();
-        }
 
-        if (window.map && typeof window.map.invalidateSize === 'function') {
-          window.map.invalidateSize();
-        }
-      });
-    });
   </script>
 </body>
 </html>
