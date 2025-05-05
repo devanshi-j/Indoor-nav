@@ -95,29 +95,27 @@
       document.body.appendChild(scene);
 
       scene.addEventListener('loaded', () => {
-        document.body.classList.add('ar-mode');
+  document.body.classList.add('ar-mode');
 
-        // Resize A-Frame renderer manually
-        if (scene.renderer) {
-          scene.renderer.setSize(window.innerWidth, window.innerHeight);
-        }
+  // Fix renderer size and camera aspect
+  if (scene.renderer && scene.camera) {
+    scene.renderer.setSize(window.innerWidth, window.innerHeight);
+    scene.camera.aspect = window.innerWidth / window.innerHeight;
+    scene.camera.updateProjectionMatrix();
+  }
 
-        // Redraw Leaflet map
-        if (window.map && typeof window.map.invalidateSize === 'function') {
-          setTimeout(() => {
-            window.map.invalidateSize();
-          }, 1000);
-        }
-      });
+  if (window.map && typeof window.map.invalidateSize === 'function') {
+    setTimeout(() => {
+      window.map.invalidateSize();
+    }, 1000);
+  }
+});
 
-      window.addEventListener('resize', () => {
-        if (scene.renderer) {
-          scene.renderer.setSize(window.innerWidth, window.innerHeight);
-        }
-        if (window.map && typeof window.map.invalidateSize === 'function') {
-          window.map.invalidateSize();
-        }
-      });
+
+     scene.renderer.setSize(window.innerWidth, window.innerHeight);
+scene.camera.aspect = window.innerWidth / window.innerHeight;
+scene.camera.updateProjectionMatrix();
+
     });
   </script>
 </body>
