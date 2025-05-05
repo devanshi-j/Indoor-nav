@@ -77,6 +77,21 @@
     <a-marker id="Entrance" type="pattern" url="../markers/marker1.patt" markerhandler></a-marker>
     <a-marker id="Corridor1" type="pattern" url="../markers/marker2.patt" markerhandler></a-marker>
     <a-marker id="Kitchen" type="pattern" url="../markers/marker3.patt" markerhandler></a-marker>
+
+    <div id="markerStatus" style="
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  background: rgba(0,0,0,0.7);
+  color: white;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-family: sans-serif;
+  z-index: 1000;
+  display: none;">
+  Marker detected: <span id="markerIdText">N/A</span>
+</div>
+
   </a-scene>
   
   <script>
